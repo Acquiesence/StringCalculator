@@ -1,32 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace StringCalculator
 {
     public static class StringHelpers
     {
-        /// <summary>
-        /// converts a string of comma separated list of numbers into collection of ints
-        /// </summary>
-        /// <param name="input">string of comma separated list of numbers</param>
-        /// <returns>collection of ints</returns>
-        public static IEnumerable<int> StringToInts(string input)
+        public static int SumOfNumbers(string input, List<string> _defaultDelimiters)
         {
             try
             {
-                string[] splitInput = input.Split(',', StringSplitOptions.RemoveEmptyEntries);
-                var output = new List<int>();
-                foreach (var numberString in splitInput)
-                {
-                    output.Add(int.Parse(numberString));
-                }
-                return output;
+                //Splitting the string of numbers and converts into a list of integer numbers.
+                var splitNumbers = input.Split(_defaultDelimiters.ToArray(), StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
+                //Check to see if numbers are valid.
+                ValidateNumbers(splitNumbers);
+                //Return the sum of numbers.
+                return splitNumbers.Sum();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw;
             }
+        }
+
+        //if any number is NOT less than 0, we return and continue on with the application, if any number is negative, we create a string of negative numbers to show in the exception message.
+        private static void ValidateNumbers(IReadOnlyCollection<int> numbers)
+        {
+            if (!numbers.Any(x => x < 0)) return;
+
+            var negativeNumbers = string.Join(",", numbers.Where(x => x < 0).Select(x => x.ToString()).ToArray());
+            throw new Exception($"Negative Numbers are not allowed. '{negativeNumbers}'");
         }
     }
 }

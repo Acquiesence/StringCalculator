@@ -29,5 +29,22 @@ namespace StringCalculatorTests
         {
             Assert.Equal(expected, Calculator.Add(input));
         }
+
+        [Theory]
+        [InlineData("//[*][%][^]\n1*2%3,4^5", 15)]
+        public void Allows_Multiple_Delimiters(string input, int expected)
+        {
+            Assert.Equal(expected, Calculator.Add(input));
+        }
+
+        [Theory]
+        [InlineData("1, -2", "-2")]
+        public void Throws_Exception_When_Numbers_Are_Negative(string input, string expected)
+        {
+            Action action = () => Calculator.Add(input);
+            Exception ex = Assert.Throws<Exception>(action);
+            Assert.Equal($"Negative Numbers are not allowed. '{expected}'", ex.Message);
+
+        }
     }
 }
